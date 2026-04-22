@@ -4,619 +4,528 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Achievement 5 Drill Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['DM Sans', 'sans-serif'] },
+                    colors: { 'cap-blue': '#001489' }
+                }
+            }
+        }
+    </script>
     <style>
-        #questions-btn {
-            background-color: #001489; /* Blue color */
-            color: white;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            margin: 10px 0;
-        }
-
-        #questions-btn:hover {
-            background-color: #010f61; /* Darker blue on hover */
-        }
-
-        #blank-drill-btn {
-            background-color: #001489; /* Blue color */
-            color: white;
-            padding: 10px 20px;
-            margin: 10px 5px 20px 5px;
-            font-size: 16px;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-        }
-
-        #blank-drill-btn:hover {
-            background-color: #010f61; /* Darker blue on hover */
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            line-height: 1.6;
-        }
-
-        h1, h2, h3 {
-            text-align: center;
-        }
-
-        label {
-            font-weight: bold;
-            display: block; /* Changed to block for vertical stacking */
-            margin: 10px 0 5px; /* Added margin for spacing */
-        }
-
-        input[type="text"], input[type="date"] {
-            width: 200px;
-            padding: 5px;
-            margin-bottom: 20px; /* Margin for spacing between fields */
-        }
-
-        .question {
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
-
-        .qualifications {
-            margin: 10px 0;
-            font-style: italic;
-        }
-
-        .radio-group {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-        }
-
-        .radio-group label {
-            margin-right: 20px;
-            font-weight: normal;
-        }
-
-        .radio-group input[type="radio"] {
-            margin-right: 5px;
-        }
-
-        button {
-            padding: 10px 20px;
-            margin: 10px 5px 20px 5px;
-            font-size: 16px;
-            cursor: pointer;
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
-
-        /* Submit Button */
-        #submit-btn {
-            background-color: #001489; /* Blue color */
-        }
-
-        #submit-btn:hover {
-            background-color: #010f61; /* Darker blue on hover */
-        }
-
-        /* Download Button */
-        #download-btn {
-            background-color: #001489; /* Blue color */
-        }
-
-        #download-btn:hover {
-            background-color: #010f61; /* Darker blue on hover */
-        }
-
-        /* Home Button */
-        .home-btn {
-            background-color: #c72f2f; /* Red color */
-        }
-
-        .home-btn:hover {
-            background-color: #8b1414; /* Darker red on hover */
-        }
-
-        .result-text {
-            font-size: 24px;
-            font-weight: bold;
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .passed {
-            color: green;
-        }
-
-        .not-passed {
-            color: red;
-        }
-
-        hr {
-            margin: 30px 0;
-        }
-
-        a {
-            display: block;
-            text-align: center;
-            margin-top: 30px;
-            text-decoration: none;
-            color: #007BFF;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
+        body { font-family: 'DM Sans', sans-serif; }
+        .radio-option input[type="radio"] { accent-color: #2563eb; width: 1rem; height: 1rem; }
+        .radio-option:has(input:checked) { background-color: #eff6ff; border-color: #3b82f6; }
     </style>
-    <!-- Include jsPDF library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <script>
     function downloadStaticPDF() {
-        const pdfPath = './Ach5.pdf';  // Assuming the PDF is in the root folder
         const link = document.createElement('a');
-        link.href = pdfPath;
-        link.download = 'Ach5Blank.pdf';  // The file name when downloaded
+        link.href = './Ach5.pdf';
+        link.download = 'Ach5Blank.pdf';
         link.click();
     }
     function calculateResults() {
-        const totalQuestions = 22; // Updated to the actual number of questions
-        let correctAnswers = 0;
-        let totalAnswered = 0;
-
-        // Select all the question elements
-        const questions = document.querySelectorAll('.question');
-
-        // Loop through each question
-        questions.forEach((question, index) => {
-            // Get the correct and incorrect radio buttons for this question
+        const totalQuestions = 21;
+        let correctAnswers = 0, totalAnswered = 0;
+        document.querySelectorAll('.question').forEach((question, index) => {
             const correctRadio = question.querySelector(`input[name="q${index + 1}"][data-correct="true"]`);
             const selectedRadio = question.querySelector(`input[name="q${index + 1}"]:checked`);
-
-            // If the user selected an answer, increase the totalAnswered count
             if (selectedRadio) {
                 totalAnswered += 1;
-
-                // If the correct answer is selected, increase the correctAnswers count
-                if (correctRadio && correctRadio.checked) {
-                    correctAnswers += 1;
-                }
+                if (correctRadio && correctRadio.checked) correctAnswers += 1;
             }
         });
-
-        // Check if all questions are answered
         if (totalAnswered !== totalQuestions) {
             alert(`You have answered ${totalAnswered} out of ${totalQuestions} questions. Please answer all questions.`);
             return;
         }
-
-        // Calculate percentage of correct answers
         const percentage = (correctAnswers / totalQuestions) * 100;
-        let resultMessage = '';
-        let resultClass = '';
-
-        // Determine pass/fail based on percentage
-        if (percentage >= 76.95) {
-            resultMessage = `Passed - Number Correct: ${correctAnswers}`;
-            resultClass = 'passed';
-        } else {
-            resultMessage = `Failed - Number Correct: ${correctAnswers}`;
-            resultClass = 'not-passed';
-        }
-
-        // Update the result text and class for displaying the result
+        const passed = percentage >= 76;
         document.getElementById('total-correct').textContent = correctAnswers;
         document.getElementById('total-incorrect').textContent = totalQuestions - correctAnswers;
-        const resultElement = document.getElementById('result');
-        resultElement.textContent = resultMessage;
-        resultElement.className = `result-text ${resultClass}`;
-
-        // Scroll to the result area smoothly
-        resultElement.scrollIntoView({ behavior: 'smooth' });
+        const resultEl = document.getElementById('result');
+        resultEl.textContent = passed
+            ? `✓ Passed — ${correctAnswers} / ${totalQuestions} correct`
+            : `✗ Failed — ${correctAnswers} / ${totalQuestions} correct`;
+        resultEl.className = passed
+            ? 'text-2xl font-bold text-center py-4 text-green-600'
+            : 'text-2xl font-bold text-center py-4 text-red-600';
+        document.getElementById('results-section').classList.remove('hidden');
+        document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
     }
     function generatePDF() {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-
         const name = document.getElementById('name').value || 'N/A';
         const date = document.getElementById('date').value || 'N/A';
         const testedBy = document.getElementById('tested-by').value || 'N/A';
         const totalCorrect = document.getElementById('total-correct').textContent;
         const totalIncorrect = document.getElementById('total-incorrect').textContent;
         const result = document.getElementById('result').textContent;
-
         doc.setFontSize(18);
         doc.text('Achievement 5 Drill & Ceremonies Practical Test', 105, 20, { align: 'center' });
-
         doc.setFontSize(12);
         doc.text(`Name: ${name}`, 20, 30);
         doc.text(`Date: ${date}`, 20, 40);
         doc.text(`Tested by: ${testedBy}`, 20, 50);
-
         doc.text(`Total Correct: ${totalCorrect}`, 20, 60);
         doc.text(`Total Incorrect: ${totalIncorrect}`, 20, 70);
         doc.text(`Result: ${result}`, 20, 80);
-
         doc.setFontSize(14);
         doc.text('Questions and Answers:', 20, 90);
-
         doc.setFontSize(12);
         let currentY = 100;
-
-        const questions = document.querySelectorAll('.question');
-        questions.forEach((question, index) => {
+        document.querySelectorAll('.question').forEach((question, index) => {
             const questionLabel = question.querySelector('label').textContent;
-            const correctChecked = question.querySelector(`input[name="q${index + 1}"][data-correct="true"]`).checked;
-            const answer = correctChecked ? 'Correct' : 'Incorrect';
-
-            if (currentY > 280) {
-                doc.addPage();
-                currentY = 20;
-            }
-
+            const correctInput = question.querySelector(`input[name="q${index + 1}"][data-correct="true"]`);
+            const answer = correctInput && correctInput.checked ? 'Correct' : 'Incorrect';
+            if (currentY > 280) { doc.addPage(); currentY = 20; }
             doc.text(`${questionLabel}: ${answer}`, 20, currentY);
             currentY += 10;
         });
-
-        doc.save(`Achievement5DrillTest_${name}.pdf`);  // This was missing
+        doc.save(`Achievement5DrillTest_${name}.pdf`);
     }
-    </script>
-</head>
-<body>
-    <h1>Achievement 5 Drill & Ceremonies Practical Test</h1>
     
-    <!-- Personal Information -->
-    <div style="text-align: center; margin-bottom: 30px;">
-        <label for="name">Name:</label>
-        <input type="text" id="name" required>
-        
-        <label for="date">Date:</label>
-        <input type="date" id="date" required>
-        
-        <label for="tested-by">Tested by:</label>
-        <input type="text" id="tested-by" required>
-    </div>
-    
-    <div text-align: center;">
-         <p>Topic: Drill of the Flight as a Flight Sergeant</p>
-         <p>Conditions: Form at least 6 cadets into a flight of 2 elements. Assign to the flight cadets who are proficient in basic drill. Provide the cadet with a list of the commands shown below without the standards (see Attachment 1) and allow the cadet to refer to them during the test. Instruct the cadet to lead the flight in drill, completing all commands in sequence.</p>
-         <p>Passing Score: 76%. Must perform at least 16 out of the 21 commands satisfactorily</p>
-         <p>Note: The cadet may add commands as necessary to navigate around obstacles or keep flight in drill area. Do not grade any additional commands. The flight’s ability to perform the commands is NOT relevant to this test – only the cadet’s ability to call commands properly is being evaluated.</p>
-        </div>
-    
-    <!-- Button linking to Ach5Questions.html -->
-    <div style="text-align: center; margin-bottom: 20px;">
-        <button id="questions-btn" onclick="window.location.href='Ach5Questions.html'">Questions</button>
-    </div>
-    
-    <!-- Question 1 -->
-    <div class="question">
-        <label>FALL IN</label>
-        <div class="qualifications">
-            Gives command from the position of attention<br>
-            Combined command given with steady inflection without a pause between words.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q1" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q1" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-    <!-- Question 2 -->
-    <div class="question">
-        <label>Dress Right, DRESS (check alignment)</label>
-        <div class="qualifications">
-            Proceeds to the right flank and directs individual cadets to move as needed.<br>
-            Proceeds from element to element by facing in marching. <br>
-            After checking 2nd element, faces in marching to the right, moves 3 paces forward of the front rank, halts, faces left.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q2" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q2" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-    <!-- Question 3 -->
-    <div class="question">
-        <label>Ready, FRONT</label>
-        <div class="qualifications">
-            After giving command, resumes position 3 paces from and centered on the flight. <br>
-            Command is clear and snaps
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q3" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q3" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-    <!-- Question 4 -->
-    <div class="question">
-        <label>Right, FACE</label>
-        <div class="qualifications">
-            Command is clear and snaps.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q4" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q4" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-    <!-- Question 5 -->
-    <div class="question">
-        <label>Forward, MARCH</label>
-        <div class="qualifications">
-            Command is clear and snaps.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q5" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q5" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-    <!-- Question 6 -->
-    <div class="question">
-        <label>Column Right, MARCH</label>
-        <div class="qualifications">
-            Preparatory: right foot
-            Execution: right foot<br>
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q6" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q6" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-    <!-- Question 7 -->
-    <div class="question">
-        <label>Forward, MARCH</label>
-        <div class="qualifications">
-            Command is clear and snaps. Given on left foot
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q7" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q7" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-        
-    <hr>
-    <!-- Question 8 -->
-    <div class="question">
-        <label>Close, MARCH & Forward, MARCH</label>
-        <div class="qualifications">
-            Preparatory: right foot Execution: right foot<br>
-            Preparatory: left foot Execution: left foot
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q8" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q8" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-    <!-- Question 9 -->
-    <div class="question">
-        <label>9. Extend, MARCH & Forward, MARCH</label>
-        <div class="qualifications">
-            Preparatory: left foot Execution: left foot<br>
-            Preparatory: left foot Execution: left foot
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q9" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q9" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-    <!-- Question 10 -->
-    <div class="question">
-        <label>Change Step, MARCH</label>
-        <div class="qualifications">
-            Preparatory: right foot Execution: right foot
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q10" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q10" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-    <!-- Question 11 -->
-    <div class="question">
-        <label>Count Cadence, COUNT</label>
-        <div class="qualifications">
-            Preparatory: left foot Execution: left foot<br>
-            Preparatory command is given in one count, not spread out or sung
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q11" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q11" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-    <!-- Question 12 -->
-    <div class="question">
-        <label>Flight, HALT</label>
-        <div class="qualifications">
-            Command is clear and snaps
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q12" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q12" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-    <!-- Question 13 -->
-    <div class="question">
-        <label>Left Steps, MARCH</label>
-        <div class="qualifications">
-            Command is clear and snaps
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q13" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q13" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-    <!-- Question 14 -->
-    <div class="question">
-        <label>Flight, HALT</label>
-        <div class="qualifications">
-            Preparatory: when heels are together<br>
-            Execution: when heels are together
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q14" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q14" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-    <!-- Question 15 -->
-    <div class="question">
-        <label>Left, FACE</label>
-        <div class="qualifications">
-            Command is clear and snaps.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q15" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q15" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-        <!-- Question 16 -->
-    <div class="question">
-        <label>Eyes, RIGHT</label>
-        <div class="qualifications">
-            At command of execution, take six steps backward and halt. Execute a face in marching 45 degrees to the left, halts next to 1st element leader facing the rear of the flight, and faces right.<br>
-            Takes short side steps to check alignment without bending body.<br>
-            Directs individual cadets to move as needed.<br>
-            After checking 2nd element, faces in marching to the right, moves 3 paces forward of the front rank, halts, faces left.<br>
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q16" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q16" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-        <!-- Question 17 -->
-    <div class="question">
-        <label>Ready, FRONT</label>
-        <div class="qualifications">
-            After giving command, resumes position 3 paces from and centered on the flight.<br>
-            Command is clear and snaps.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q17" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q17" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-            <!-- Question 18 -->
-    <div class="question">
-        <label>Close Ranks, MARCH</label>
-        <div class="qualifications">
-            Command is clear and snaps
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q18" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q18" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-                <!-- Question 19 -->
-    <div class="question">
-        <label>Right, FACE</label>
-        <div class="qualifications">
-            Not graded; used to position flight in column formation
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q19" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-                <!-- Question 20 -->
-    <div class="question">
-        <label>Column of Files from the Right, Forward, MARCH</label>
-        <div class="qualifications">
-            Preparatory command is given without "singing", in one count.<br>
-            Pauses between the preparatory command and command of execution to allow element leaders to give supplementary commands.<br>
-            Command of execution is clear and snaps.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q20" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q20" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-                <!-- Question 21 -->
-    <div class="question">
-        <label>Flight, HALT</label>
-        <div class="qualifications">
-            Command is clear and snaps
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q21" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q21" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-                <!-- Question 22 -->
-    <div class="question">
-        <label>FALL OUT</label>
-        <div class="qualifications">
-            Combined command given in steady inflection without a pause between words.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q22" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q22" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-    
-
-    
-<h3>Test Results</h3>
-    <p>Total Correct: <span id="total-correct">0</span></p>
-    <p>Total Incorrect: <span id="total-incorrect">0</span></p>
-
-    <div id="result" class="result-text"></div>
-    <button id="submit-btn" onclick="calculateResults()">Submit</button>
-    <button id="download-btn" onclick="generatePDF()">Download PDF</button>
-    <button id="blank-drill-btn" onclick="downloadStaticPDF()">Download Blank Drill Test</button>
-
-
-    <div style="text-align: center; margin-top: 30px;">
-        <button class="home-btn" onclick="confirmHomeNavigation()">Return to Home</button>
-    </div>
-    <script>
     function confirmHomeNavigation() {
-        const confirmNavigation = confirm("You have unsaved work. Are you sure you want to return to the home page and lose your progress?");
-        
-        if (confirmNavigation) {
-            window.location.href = 'index.html'; // Redirect to home if the user confirms
+        if (confirm("You have unsaved work. Are you sure you want to return to the home page and lose your progress?")) {
+            window.location.href = 'index.html';
         }
     }
+
     </script>
+</head>
+
+<body class="min-h-screen bg-slate-50 flex flex-col">
+    <div class="bg-cap-blue px-4 py-2 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <img src="logo.h50-c1.png" alt="Logo" class="h-10 w-auto">
+        </div>
+        <span class="text-blue-200 text-xs font-medium tracking-wide uppercase hidden sm:block">Arlington Composite Squadron</span>
+    </div>
+    <main class="flex-1 max-w-2xl mx-auto w-full px-4 py-6 flex flex-col gap-6">
+
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl p-6">
+            <p class="text-xs uppercase tracking-widest opacity-75 mb-1">Drill Test</p>
+            <h1 class="text-2xl font-bold leading-tight">Achievement 5</h1>
+            <p class="text-sm text-blue-100 mt-1">Drill &amp; Ceremonies Practical Test</p>
+            <a href="Ach5Questions.html" target="_blank"
+               class="mt-2 inline-flex items-center gap-2 px-4 py-2 bg-blue-500 border border-white/30 text-white rounded-lg text-sm font-semibold hover:bg-blue-400 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+                View Questions Sheet
+            </a>
+        </div>
+
+        <section class="bg-white rounded-lg border border-slate-200 p-5">
+            <h2 class="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-4">Cadet Information</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="flex flex-col gap-1">
+                    <label for="name" class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Name</label>
+                    <input type="text" id="name" required
+                        class="border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label for="date" class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Date</label>
+                    <input type="date" id="date" required
+                        class="border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label for="tested-by" class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Tested By</label>
+                    <input type="text" id="tested-by" required
+                        class="border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                </div>
+            </div>
+        </section>
+
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-4 text-sm text-slate-700 space-y-1">
+            <p><span class='font-semibold text-slate-800'>Topic:</span> Drill of the Flight as a Flight Sergeant</p>
+            <p><span class='font-semibold text-slate-800'>Conditions:</span> Form at least 6 cadets into a flight of 2 elements. Assign proficient drill cadets. Provide the cadet with the commands sheet and allow them to refer to it during the test.</p>
+            <p><span class='font-semibold text-slate-800'>Passing Score:</span> 76% — must perform at least 16 out of the 21 commands satisfactorily.</p>
+            <p><span class='font-semibold text-slate-800'>Note:</span> The flight's ability to perform commands is NOT relevant — only the cadet's ability to call commands properly is evaluated.</p>
+        </div>
+
+        <section>
+            <h2 class="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-3">Questions</h2>
+            <div class="flex flex-col gap-3">
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">FALL IN</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Gives command from the position of attention.</p>
+                        <p>Combined command given with steady inflection without a pause between words.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q1" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q1" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Dress Right, DRESS (check alignment)</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Proceeds to the right flank and directs individual cadets to move as needed.</p>
+                        <p>Proceeds from element to element by facing in marching.</p>
+                        <p>After checking 2nd element, faces in marching to the right, moves 3 paces forward of the front rank, halts, faces left.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q2" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q2" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Ready, FRONT</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>After giving command, resumes position 3 paces from and centered on the flight.</p>
+                        <p>Command is clear and snaps.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q3" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q3" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Right, FACE</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Command is clear and snaps.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q4" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q4" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Forward, MARCH</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Command is clear and snaps.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q5" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q5" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Column Right, MARCH</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Preparatory: right foot.</p>
+                        <p>Execution: right foot.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q6" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q6" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Forward, MARCH</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Command is clear and snaps. Given on left foot.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q7" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q7" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Close, MARCH & Forward, MARCH</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Preparatory: right foot. Execution: right foot.</p>
+                        <p>Preparatory: left foot. Execution: left foot.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q8" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q8" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Extend, MARCH & Forward, MARCH</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Preparatory: left foot. Execution: left foot.</p>
+                        <p>Preparatory: left foot. Execution: left foot.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q9" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q9" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Change Step, MARCH</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Preparatory: right foot. Execution: right foot.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q10" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q10" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Count Cadence, COUNT</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Preparatory: left foot. Execution: left foot.</p>
+                        <p>Preparatory command is given in one count, not spread out or sung.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q11" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q11" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Flight, HALT</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Command is clear and snaps.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q12" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q12" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Left Steps, MARCH</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Command is clear and snaps.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q13" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q13" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Flight, HALT</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Preparatory: when heels are together.</p>
+                        <p>Execution: when heels are together.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q14" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q14" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Left, FACE</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Command is clear and snaps.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q15" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q15" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Eyes, RIGHT</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>At command of execution, takes six steps backward and halts. Executes a face in marching 45 degrees to the left, halts next to 1st element leader facing the rear of the flight, and faces right.</p>
+                        <p>Takes short side steps to check alignment without bending body.</p>
+                        <p>Directs individual cadets to move as needed.</p>
+                        <p>After checking 2nd element, faces in marching to the right, moves 3 paces forward of the front rank, halts, faces left.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q16" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q16" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Ready, FRONT</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>After giving command, resumes position 3 paces from and centered on the flight.</p>
+                        <p>Command is clear and snaps.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q17" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q17" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Close Ranks, MARCH</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Command is clear and snaps.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q18" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q18" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-slate-50 rounded-lg border border-dashed border-slate-300 p-4">
+                    <div class="flex items-start justify-between gap-2 mb-1">
+                        <label class="font-semibold text-slate-700 text-sm block">Right, FACE</label>
+                        <span class="text-xs text-slate-400 font-medium bg-slate-200 rounded px-2 py-0.5 whitespace-nowrap flex-shrink-0">Not Graded</span>
+                    </div>
+                    <div class="text-xs text-slate-500 italic space-y-0.5">
+                        <p>Not graded; used to position flight in column formation.</p>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Column of Files from the Right, Forward, MARCH</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Preparatory command is given without 'singing', in one count.</p>
+                        <p>Pauses between the preparatory command and command of execution to allow element leaders to give supplementary commands.</p>
+                        <p>Command of execution is clear and snaps.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q20" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q20" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Flight, HALT</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Command is clear and snaps.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q21" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q21" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">FALL OUT</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Combined command given in steady inflection without a pause between words.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q22" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q22" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <button onclick="calculateResults()"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg text-sm transition-colors">
+            Submit Test
+        </button>
+
+        <section id="results-section" class="hidden bg-white rounded-lg border border-slate-200 p-5">
+            <h2 class="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-4">Test Results</h2>
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div class="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
+                    <div class="text-xs uppercase text-green-700 font-semibold tracking-wide">Correct</div>
+                    <div class="text-2xl font-bold text-green-700" id="total-correct">0</div>
+                </div>
+                <div class="bg-red-50 border border-red-200 rounded-lg p-3 text-center">
+                    <div class="text-xs uppercase text-red-700 font-semibold tracking-wide">Incorrect</div>
+                    <div class="text-2xl font-bold text-red-700" id="total-incorrect">0</div>
+                </div>
+            </div>
+            <div id="result" class="text-2xl font-bold text-center py-4"></div>
+            <div class="flex flex-col sm:flex-row gap-3 mt-2">
+                <button onclick="generatePDF()"
+                    class="flex-1 bg-cap-blue hover:bg-blue-900 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors">
+                    Download PDF
+                </button>
+                <button onclick="downloadStaticPDF()"
+                    class="flex-1 bg-cap-blue hover:bg-blue-900 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors">
+                    Download Blank Drill Test
+                </button>
+            </div>
+        </section>
+
+        <div class="text-center pb-2">
+            <button onclick="confirmHomeNavigation()"
+                class="inline-flex items-center gap-2 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7m-9 5v6h4v-6m-4 0H9"/>
+                </svg>
+                Return to Home
+            </button>
+        </div>
+    </main>
+
+    <footer class="mt-auto border-t border-slate-200 bg-white px-4 py-4 text-center">
+        <a href="https://NATCAPWG.CAP.GOV" class="text-sm font-semibold text-cap-blue hover:underline">
+            Arlington Composite Squadron
+        </a>
+        <p class="text-xs text-slate-400 mt-1">
+            Made by 2d Lt Carter Rainey &nbsp;·&nbsp;
+            <a href="https://github.com/sddavy/DrillTesting" class="text-xs text-slate-400">Forked from Samuel Davy's CAP Online Drill Testing.</a>
+            &nbsp;·&nbsp; © 2026 Civil Air Patrol, All Rights Reserved
+        </p>
+    </footer>
 </body>
 </html>

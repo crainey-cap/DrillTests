@@ -3,589 +3,523 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wright Brothers Drill & Cerenonies Performance Test</title>
-    <style>
-
-    #blank-drill-btn {
-        background-color: #001489; /* Blue color */
-        color: white;
-        padding: 10px 20px;
-        margin: 10px 5px 20px 5px;
-        font-size: 16px;
-        cursor: pointer;
-        border: none;
-        border-radius: 5px;
-    }
-
-    #blank-drill-btn:hover {
-    background-color: #010f61; /* Darker blue on hover */
-    
-    }
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            line-height: 1.6;
-        }
-        h1, h2, h3 {
-            text-align: center;
-        }
-        label {
-            font-weight: bold;
-            display: block; /* Changed to block for vertical stacking */
-            margin: 10px 0 5px; /* Added margin for spacing */
-        }
-        input[type="text"], input[type="date"] {
-            width: 200px;
-            padding: 5px;
-            margin-bottom: 20px; /* Margin for spacing between fields */
-        }
-        .question {
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
-        .qualifications {
-            margin: 10px 0;
-            font-style: italic;
-        }
-        .radio-group {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-        }
-        .radio-group label {
-            margin-right: 20px;
-            font-weight: normal;
-        }
-        .radio-group input[type="radio"] {
-            margin-right: 5px;
-        }
-        button {
-            padding: 10px 20px;
-            margin: 10px 5px 20px 5px;
-            font-size: 16px;
-            cursor: pointer;
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
-        /* Submit Button */
-        #submit-btn {
-            background-color: #001489; /* Blue color */
-        }
-
-        #submit-btn:hover {
-            background-color: #010f61; /* Darker blue on hover */
-        }
-
-        /* Download Button */
-        #download-btn {
-            background-color: #001489; /* Blue color */
-        }
-
-        #download-btn:hover {
-            background-color: #010f61; /* Darker blue on hover */
-        }
-
-        /* Home Button */
-        .home-btn {
-            background-color: #c72f2f; /* Red color */
-        }
-
-        .home-btn:hover {
-            background-color: #8b1414; /* Darker red on hover */
-        }
-        .result-text {
-            font-size: 24px;
-            font-weight: bold;
-            text-align: center;
-            margin-top: 20px;
-        }
-        .passed {
-            color: green;
-        }
-        .not-passed {
-            color: red;
-        }
-        hr {
-            margin: 30px 0;
-        }
-        a {
-            display: block;
-            text-align: center;
-            margin-top: 30px;
-            text-decoration: none;
-            color: #007BFF;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
-    <!-- Include jsPDF library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <title>Wright Brothers Drill Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
-    function downloadStaticPDF() {
-        const pdfPath = './WrightBrothers.pdf';  // Assuming the PDF is in the root folder
-        const link = document.createElement('a');
-        link.href = pdfPath;
-        link.download = 'WrightBrothersBlank.pdf';  // The file name when downloaded
-        link.click();
-    }    
-        
-    function calculateResults() {
-        const totalQuestions = 21; // Updated to the actual number of questions
-        let correctAnswers = 0;
-        let totalAnswered = 0;
-    
-        // Select all the question elements
-        const questions = document.querySelectorAll('.question');
-    
-        // Loop through each question
-        questions.forEach((question, index) => {
-            // Get the correct and incorrect radio buttons for this question
-            const correctRadio = question.querySelector(`input[name="q${index + 1}"][data-correct="true"]`);
-            const selectedRadio = question.querySelector(`input[name="q${index + 1}"]:checked`);
-    
-            // If the user selected an answer, increase the totalAnswered count
-            if (selectedRadio) {
-            totalAnswered += 1;
-
-                // If the correct answer is selected, increase the correctAnswers count
-             if (correctRadio && correctRadio.checked) {
-            correctAnswers += 1;
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['DM Sans', 'sans-serif'] },
+                    colors: { 'cap-blue': '#001489' }
+                }
             }
         }
-    });
+    </script>
+    <style>
+        body { font-family: 'DM Sans', sans-serif; }
+        .radio-option input[type="radio"] { accent-color: #2563eb; width: 1rem; height: 1rem; }
+        .radio-option:has(input:checked) { background-color: #eff6ff; border-color: #3b82f6; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    // Check if all questions are answered
-    if (totalAnswered !== totalQuestions) {
-        alert(`You have answered ${totalAnswered} out of ${totalQuestions} questions. Please answer all questions.`);
-        return;
+    <script>
+    function downloadStaticPDF() {
+        const link = document.createElement('a');
+        link.href = './WrightBrothers.pdf';
+        link.download = 'WrightBrothersBlank.pdf';
+        link.click();
     }
-
-    // Calculate percentage of correct answers
-    const percentage = (correctAnswers / totalQuestions) * 100;
-    let resultMessage = '';
-    let resultClass = '';
-
-    // Determine pass/fail based on percentage
-    if (percentage >= 80) {
-        resultMessage = `Passed - Number Correct: ${correctAnswers}`;
-        resultClass = 'passed';
-    } else {
-        resultMessage = `Failed - Number Correct: ${correctAnswers}`;
-        resultClass = 'not-passed';
-    }
-
-    // Update the result text and class for displaying the result
-    document.getElementById('total-correct').textContent = correctAnswers;
-    document.getElementById('total-incorrect').textContent = totalQuestions - correctAnswers;
-    const resultElement = document.getElementById('result');
-    resultElement.textContent = resultMessage;
-    resultElement.className = `result-text ${resultClass}`;
-
-    // Scroll to the result area smoothly
-    resultElement.scrollIntoView({ behavior: 'smooth' });
-    }
-        function generatePDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            const name = document.getElementById('name').value || 'N/A';
-            const date = document.getElementById('date').value || 'N/A';
-            const testedBy = document.getElementById('tested-by').value || 'N/A';
-            const totalCorrect = document.getElementById('total-correct').textContent;
-            const totalIncorrect = document.getElementById('total-incorrect').textContent;
-            const result = document.getElementById('result').textContent;
-
-            doc.setFontSize(18);
-            doc.text('Wright Brothers Drill & Cerenonies Performance Test', 105, 20, { align: 'center' });
-
-            doc.setFontSize(12);
-            doc.text(`Name: ${name}`, 20, 30);
-            doc.text(`Date: ${date}`, 20, 40);
-            doc.text(`Tested by: ${testedBy}`, 20, 50);
-
-            doc.text(`Total Correct: ${totalCorrect}`, 20, 60);
-            doc.text(`Total Incorrect: ${totalIncorrect}`, 20, 70);
-            doc.text(`Result: ${result}`, 20, 80);
-
-            doc.setFontSize(14);
-            doc.text('Questions and Answers:', 20, 90);
-
-            doc.setFontSize(12);
-            let currentY = 100;
-
-            const questions = document.querySelectorAll('.question');
-            questions.forEach((question, index) => {
-                const questionLabel = question.querySelector('label').textContent;
-                const qualifications = question.querySelector('.qualifications').innerText;
-                const correctChecked = question.querySelector(`input[name="q${index + 1}"][data-correct="true"]`).checked;
-                const answer = correctChecked ? 'Correct' : 'Incorrect';
-
-                if (currentY > 280) {
-                    doc.addPage();
-                    currentY = 20;
-                }
-
-                doc.text(`${questionLabel}: ${answer}`, 20, currentY);
-                currentY += 10;
-            });
-
-            doc.save(`WrightBrothersDrillTest_${name}.pdf`);
+    function calculateResults() {
+        const totalQuestions = 20;
+        let correctAnswers = 0, totalAnswered = 0;
+        document.querySelectorAll('.question').forEach((question, index) => {
+            const correctRadio = question.querySelector(`input[name="q${index + 1}"][data-correct="true"]`);
+            const selectedRadio = question.querySelector(`input[name="q${index + 1}"]:checked`);
+            if (selectedRadio) {
+                totalAnswered += 1;
+                if (correctRadio && correctRadio.checked) correctAnswers += 1;
+            }
+        });
+        if (totalAnswered !== totalQuestions) {
+            alert(`You have answered ${totalAnswered} out of ${totalQuestions} questions. Please answer all questions.`);
+            return;
         }
+        const percentage = (correctAnswers / totalQuestions) * 100;
+        const passed = percentage >= 80;
+        document.getElementById('total-correct').textContent = correctAnswers;
+        document.getElementById('total-incorrect').textContent = totalQuestions - correctAnswers;
+        const resultEl = document.getElementById('result');
+        resultEl.textContent = passed
+            ? `✓ Passed — ${correctAnswers} / ${totalQuestions} correct`
+            : `✗ Failed — ${correctAnswers} / ${totalQuestions} correct`;
+        resultEl.className = passed
+            ? 'text-2xl font-bold text-center py-4 text-green-600'
+            : 'text-2xl font-bold text-center py-4 text-red-600';
+        document.getElementById('results-section').classList.remove('hidden');
+        document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
+    }
+    function generatePDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const name = document.getElementById('name').value || 'N/A';
+        const date = document.getElementById('date').value || 'N/A';
+        const testedBy = document.getElementById('tested-by').value || 'N/A';
+        const totalCorrect = document.getElementById('total-correct').textContent;
+        const totalIncorrect = document.getElementById('total-incorrect').textContent;
+        const result = document.getElementById('result').textContent;
+        doc.setFontSize(18);
+        doc.text('Wright Brothers Drill & Ceremonies Performance Test', 105, 20, { align: 'center' });
+        doc.setFontSize(12);
+        doc.text(`Name: ${name}`, 20, 30);
+        doc.text(`Date: ${date}`, 20, 40);
+        doc.text(`Tested by: ${testedBy}`, 20, 50);
+        doc.text(`Total Correct: ${totalCorrect}`, 20, 60);
+        doc.text(`Total Incorrect: ${totalIncorrect}`, 20, 70);
+        doc.text(`Result: ${result}`, 20, 80);
+        doc.setFontSize(14);
+        doc.text('Questions and Answers:', 20, 90);
+        doc.setFontSize(12);
+        let currentY = 100;
+        document.querySelectorAll('.question').forEach((question, index) => {
+            const questionLabel = question.querySelector('label').textContent;
+            const correctInput = question.querySelector(`input[name="q${index + 1}"][data-correct="true"]`);
+            const answer = correctInput && correctInput.checked ? 'Correct' : 'Incorrect';
+            if (currentY > 280) { doc.addPage(); currentY = 20; }
+            doc.text(`${questionLabel}: ${answer}`, 20, currentY);
+            currentY += 10;
+        });
+        doc.save(`WrightBrothersDrillTest_${name}.pdf`);
+    }
+    
+    function confirmHomeNavigation() {
+        if (confirm("You have unsaved work. Are you sure you want to return to the home page and lose your progress?")) {
+            window.location.href = 'index.html';
+        }
+    }
+
     </script>
 </head>
-<body>
-    <h1>Wright Brothers Drill & Cerenonies Performance Test</h1>
-    
-    <!-- Personal Information -->
-    <div style="text-align: center; margin-bottom: 30px;">
-        <label for="name">Name:</label>
-        <input type="text" id="name" required>
-        
-        <label for="date">Date:</label>
-        <input type="date" id="date" required>
-        
-        <label for="tested-by">Tested by:</label>
-        <input type="text" id="tested-by" required>
+
+<body class="min-h-screen bg-slate-50 flex flex-col">
+    <div class="bg-cap-blue px-4 py-2 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <img src="logo.h50-c1.png" alt="Logo" class="h-10 w-auto">
+        </div>
+        <span class="text-blue-200 text-xs font-medium tracking-wide uppercase hidden sm:block">Arlington Composite Squadron</span>
     </div>
-    
-    <h2>Questions</h2>
-    <hr>
+    <main class="flex-1 max-w-2xl mx-auto w-full px-4 py-6 flex flex-col gap-6">
 
-    <!-- Block of text before questions -->
-    <div style="text-align: left; margin-bottom: 30px;">
-        <p>Topic: Advanced Drill as an Element Leader. This is the second part of the Wright Brothers Exam.</p>
-        <p>Conditions: Form at least 6 cadets into a flight of 2 elements. Graded cadet will be 1st element leader.</p>
-        <p>Passing Score: 80%. Must perform at least 17 out of 21 commands satisfactorily</p>
-    </div>
+        <div class="bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl p-6">
+            <p class="text-xs uppercase tracking-widest opacity-75 mb-1">Milestone Award</p>
+            <h1 class="text-2xl font-bold leading-tight flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                </svg>
+                Wright Brothers
+            </h1>
+            <p class="text-sm text-amber-100 mt-1">Drill &amp; Ceremonies Performance Test</p>
+        </div>
 
-    
-    <!-- Question 1 -->
-    <div class="question">
-        <label>FALL IN</label>
-        <div class="qualifications">
-            Assumes the position of Attention.<br>
-            Raises left arm to establish interval for the flight.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q1" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q1" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
+        <section class="bg-white rounded-lg border border-slate-200 p-5">
+            <h2 class="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-4">Cadet Information</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="flex flex-col gap-1">
+                    <label for="name" class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Name</label>
+                    <input type="text" id="name" required
+                        class="border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label for="date" class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Date</label>
+                    <input type="date" id="date" required
+                        class="border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label for="tested-by" class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Tested By</label>
+                    <input type="text" id="tested-by" required
+                        class="border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                </div>
+            </div>
+        </section>
 
-    <!-- Question 2 -->
-    <div class="question">
-        <label>Present, ARMS & Order, ARMS</label>
-        <div class="qualifications">
-            Smartly raises right hand to right eyebrow, glasses, or bill of cap. Holds salute, slightly canted down.<br>
-            Smoothly and smartly retraces path of arm down to position of Attention.
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-4 text-sm text-slate-700 space-y-1">
+            <p><span class='font-semibold text-slate-800'>Topic:</span> Advanced Drill as an Element Leader. This is the second part of the Wright Brothers Exam.</p>
+            <p><span class='font-semibold text-slate-800'>Conditions:</span> Form at least 6 cadets into a flight of 2 elements. Graded cadet will be 1st element leader.</p>
+            <p><span class='font-semibold text-slate-800'>Passing Score:</span> 80% — must perform at least 17 out of 21 commands satisfactorily.</p>
         </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q2" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q2" data-correct="true"> Satisfactory</label>            
-        </div>
-    </div>
-    <hr>
 
-    <!-- Question 3 -->
-    <div class="question">
-        <label>Parade, REST</label>
-        <div class="qualifications">
-            Moves left foot such that heels are about 12-inches apart.<br>
-            Extends arms behind body and places right hand in palm of left hand.<br>
-            Keeps head and eyes straight ahead; is immobile and silent.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q3" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q3" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
+        <section>
+            <h2 class="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-3">Questions</h2>
+            <div class="flex flex-col gap-3">
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">FALL IN</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Assumes the position of Attention.</p>
+                        <p>Raises left arm to establish interval for the flight.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q1" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q1" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Present, ARMS & Order, ARMS</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Smartly raises right hand to right eyebrow, glasses, or bill of cap. Holds salute, slightly canted down.</p>
+                        <p>Smoothly and smartly retraces path of arm down to position of Attention.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q2" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q2" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Parade, REST</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Moves left foot such that heels are about 12-inches apart.</p>
+                        <p>Extends arms behind body and places right hand in palm of left hand.</p>
+                        <p>Keeps head and eyes straight ahead; is immobile and silent.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q3" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q3" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Flight, ATTENTION</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Stands and shows good posture; hands cupped on pant/skirt seam.</p>
+                        <p>Remains immobile and silent.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q4" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q4" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Left Step, MARCH & Flight, HALT</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Steps sideways to left via a series of 12-inch steps without dragging right foot.</p>
+                        <p>After being commanded to halt, takes another step to the left and brings feet together.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q6" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q5" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Left, FACE</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Pivots 90-degrees to the left on ball and heel.</p>
+                        <p>Maintains upper body in position of attention.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q6" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q6" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">About, FACE</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Pivots 180-degrees to the right on ball and heel in 2 counts.</p>
+                        <p>Maintains upper body in position of attention.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q7" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q7" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Forward, MARCH</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Steps off with left foot.</p>
+                        <p>Does not anticipate the command of execution.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q8" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q8" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Right Flank, MARCH</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>While marching, turns 90-degrees to the right.</p>
+                        <p>Maintains proper dress, cover, interval, and distance.</p>
+                        <p>Suspends armswing during pivot.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q9" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q9" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Left Flank, MARCH</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>While marching, turns 90-degrees to the left.</p>
+                        <p>Maintains proper dress, cover, interval, and distance.</p>
+                        <p>Suspends armswing during pivot.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q10" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q10" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Column Right, MARCH & Forward, MARCH</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>While marching, turns 90-degrees to the right via two 45-degree pivots.</p>
+                        <p>Takes up half-step at correct time and maintains until Forward March is called.</p>
+                        <p>Maintains proper dress and interval.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q11" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q11" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">To the Rear, MARCH</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>While marching, reverses direction smartly by pivoting 180-degrees to the right.</p>
+                        <p>Takes half step, pivot, half step, full step; suspends armswing during pivot.</p>
+                        <p>Maintains proper dress, cover, interval, and distance.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q12" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q12" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-slate-50 rounded-lg border border-dashed border-slate-300 p-4">
+                    <div class="flex items-start justify-between gap-2 mb-1">
+                        <label class="font-semibold text-slate-700 text-sm block">To the Rear, MARCH</label>
+                        <span class="text-xs text-slate-400 font-medium bg-slate-200 rounded px-2 py-0.5 whitespace-nowrap flex-shrink-0">Not Graded</span>
+                    </div>
+                    <div class="text-xs text-slate-500 italic space-y-0.5">
+                        <p>Not graded; places the cadets in column formation.</p>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Column Left, MARCH & Forward, MARCH</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>In marching, turns 90-degrees to the left via one 90-degree pivot.</p>
+                        <p>Takes up half-step at correct time and maintains until Forward March is called.</p>
+                        <p>Maintains proper dress and interval.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q14" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q14" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Change Step, MARCH</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>In one count, places the ball of the right foot alongside the heel of the left foot, then steps off with the left foot.</p>
+                        <p>Maintains posture as if at Attention; suspends armswing during maneuver.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q15" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q15" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Count Cadence, COUNT</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Counts cadence for eight steps.</p>
+                        <p>Does not shout; makes counts sharp and clear as heel strikes the ground.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q16" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q16" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Flight, HALT</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Comes to a full stop in two counts.</p>
+                        <p>Maintains position of attention.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q17" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q17" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Right, FACE</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Pivots 90-degrees to the left on ball and heel.</p>
+                        <p>Maintains upper body in position of attention.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q18" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q18" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Open Ranks, MARCH</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>1st Element takes 3 steps forward.</p>
+                        <p>Automatically executes dress right dress once halted.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q19" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q19" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Ready, FRONT</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>Lowers arm with snap but without slapping the leg.</p>
+                        <p>Turns head to front with snap.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q20" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q20" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+                <div class="question bg-white rounded-lg border border-slate-200 p-4">
+                    <label class="font-semibold text-slate-800 text-sm block mb-1">Close Ranks, MARCH & FALL OUT</label>
+                    <div class="text-xs text-slate-500 italic mb-3 space-y-0.5">
+                        <p>1st Element stands fast at Attention.</p>
+                        <p>Breaks ranks to fall out; no specific method of dispersal is required.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q21" data-correct="false"> Satisfactory
+                        </label>
+                        <label class="radio-option flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+                            <input type="radio" name="q21" data-correct="true"> Unsatisfactory
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <!-- Question 4 -->
-    <div class="question">
-        <label>Flight, ATTENTION</label>
-        <div class="qualifications">
-            Stands and shows good posture; hands cupped on pant/skirt seam.<br>
-            Remains immobile and silent
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q4" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q4" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
+        <button onclick="calculateResults()"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg text-sm transition-colors">
+            Submit Test
+        </button>
 
-    <!-- Question 5 -->
-    <div class="question">
-        <label>Left Step, MARCH & Flight, HALT</label>
-        <div class="qualifications">
-            Steps sideways to left via a series of 12-inch steps without dragging right foot.<br>
-            After being commanded to halt, takes another step to the left and brings feet together
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q6" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q5" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
+        <section id="results-section" class="hidden bg-white rounded-lg border border-slate-200 p-5">
+            <h2 class="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-4">Test Results</h2>
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div class="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
+                    <div class="text-xs uppercase text-green-700 font-semibold tracking-wide">Correct</div>
+                    <div class="text-2xl font-bold text-green-700" id="total-correct">0</div>
+                </div>
+                <div class="bg-red-50 border border-red-200 rounded-lg p-3 text-center">
+                    <div class="text-xs uppercase text-red-700 font-semibold tracking-wide">Incorrect</div>
+                    <div class="text-2xl font-bold text-red-700" id="total-incorrect">0</div>
+                </div>
+            </div>
+            <div id="result" class="text-2xl font-bold text-center py-4"></div>
+            <div class="flex flex-col sm:flex-row gap-3 mt-2">
+                <button onclick="generatePDF()"
+                    class="flex-1 bg-cap-blue hover:bg-blue-900 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors">
+                    Download PDF
+                </button>
+                <button onclick="downloadStaticPDF()"
+                    class="flex-1 bg-cap-blue hover:bg-blue-900 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors">
+                    Download Blank Drill Test
+                </button>
+            </div>
+        </section>
 
-    <!-- Question 6 -->
-    <div class="question">
-        <label>Left, FACE</label>
-        <div class="qualifications">
-            Pivots 90-degrees to the left on ball and heel.<br>
-            Maintains upper body in position of attention.
+        <div class="text-center pb-2">
+            <button onclick="confirmHomeNavigation()"
+                class="inline-flex items-center gap-2 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7m-9 5v6h4v-6m-4 0H9"/>
+                </svg>
+                Return to Home
+            </button>
         </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q6" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q6" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
+    </main>
 
-    <!-- Question 7 -->
-    <div class="question">
-        <label>About, FACE</label>
-        <div class="qualifications">
-            Pivots 180-degrees to the right on ball and heel in 2 counts.<br>
-            Maintains upper body in position of attention.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q7" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q7" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-        
-    <hr>
-    
-    <!-- Question 8 -->
-    <div class="question">
-        <label>Forward, MARCH</label>
-        <div class="qualifications">
-            Steps off with left foot.<br>
-            Does not anticipate the command of execution.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q8" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q8" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-    <!-- Question 9 -->
-    <div class="question">
-        <label>Right Flank, MARCH</label>
-        <div class="qualifications">
-            While marching, turns 90-degrees to the right.<br>
-            Maintains proper dress, cover, interval, and distance.<br>
-            Suspends armswing during pivot.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q9" data-correct="false"> Unsatisfactory</label>            
-            <label><input type="radio" name="q9" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-    <!-- Question 10 -->
-    <div class="question">
-        <label>Left Flank, MARCH</label>
-        <div class="qualifications">
-            While marching, turns 90-degrees to the left.<br>
-            Maintains proper dress, cover, interval, and distance.<br>
-            Suspends armswing during pivot.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q10" data-correct="false"> Unsatisfactory</label>      
-            <label><input type="radio" name="q10" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-    <!-- Question 11 -->
-    <div class="question">
-        <label>Column Right, MARCH & Forward, MARCH</label>
-        <div class="qualifications">
-            While marching, turns 90-degrees to the right via two 45-degree pivots.<br>
-            Takes up half-step at correct time and maintains until Forward March is called.<br>
-             Maintains proper dress and interval.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q11" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q11" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-    <!-- Question 12 -->
-    <div class="question">
-        <label>To the Rear, MARCH</label>
-        <div class="qualifications">
-           While marching, reverses direction smartly by pivoting 180-degrees to the right.<br>
-            Takes half step, pivot, half step, full step; suspends armswing during pivot.<br>
-            Maintains proper dress, cover, interval, and distance.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q12" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q12" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-    <!-- Question 13 -->
-    <div class="question">
-        <label>To the Rear, MARCH</label>
-        <div class="qualifications">
-            Not graded; places the cadets in column formation.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q13" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-    <!-- Question 14 -->
-    <div class="question">
-        <label>Column Left, MARCH & Forward, MARCH</label>
-        <div class="qualifications">
-            In marching, turns 90-degrees to the left via one 90-degree pivot.<br>
-            Takes up half-step at correct time and maintains until Forward March is called.<br>
-            Maintains proper dress and interval
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q14" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q14" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-    <!-- Question 15 -->
-    <div class="question">
-        <label>Change Step, MARCH</label>
-        <div class="qualifications">
-            In one count, places the ball of the right foot alongside the heel of the left foot, then steps off with the left foot.<br>
-            CMaintains posture as if at Attention; suspends armswing during maneuver.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q15" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q15" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-        <!-- Question 16 -->
-    <div class="question">
-        <label>Count Cadence, COUNT</label>
-        <div class="qualifications">
-            Counts cadence for eight steps.<br>
-            Does not shout; makes counts sharp and clear as heel strikes the ground
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q16" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q16" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-        <!-- Question 17 -->
-    <div class="question">
-        <label>Flight, HALT</label>
-        <div class="qualifications">
-            Comes to a full stop in two counts<br>
-            Maintains position of attention.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q17" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q17" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-            <!-- Question 18 -->
-    <div class="question">
-        <label>Right, FACE</label>
-        <div class="qualifications">
-            Pivots 90-degrees to the left on ball and heel.<br>
-            Maintains upper body in position of attention.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q18" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q18" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-            <!-- Question 19 -->
-    <div class="question">
-        <label>Open Ranks, MARCH</label>
-        <div class="qualifications">
-            1st Element takes 3 steps forward.<br>
-            Automatically executes dress right dress once halted.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q19" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q19" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-
-            <!-- Question 20 -->
-    <div class="question">
-        <label>Ready, FRONT</label>
-        <div class="qualifications">
-            Lowers arm with snap but without slapping the leg.<br>
-            Turns head to front with snap.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q20" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q20" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>
-
-            <!-- Question 21 -->
-    <div class="question">
-        <label>Close Ranks, MARCH & FALL OUT</label>
-        <div class="qualifications">
-            1st Element stands fast at Attention.<br>
-            Breaks ranks to fall out; no specific method of dispersal is required.
-        </div>
-        <div class="radio-group">
-            <label><input type="radio" name="q21" data-correct="false"> Unsatisfactory</label>
-            <label><input type="radio" name="q21" data-correct="true"> Satisfactory</label>
-        </div>
-    </div>
-    <hr>    
-
-    
-<h3>Test Results</h3>
-    <p>Total Correct: <span id="total-correct">0</span></p>
-    <p>Total Incorrect: <span id="total-incorrect">0</span></p>
-
-    <div id="result" class="result-text"></div>
-    <button id="submit-btn" onclick="calculateResults()">Submit</button>
-    <button id="download-btn" onclick="generatePDF()">Download PDF</button>
-    <button id="blank-drill-btn" onclick="downloadStaticPDF()">Download Blank Drill Test</button>
-
-    <div style="text-align: center; margin-top: 30px;">
-        <button class="home-btn" onclick="confirmHomeNavigation()">Return to Home</button>
-    </div>
-    <script>
-    function confirmHomeNavigation() {
-        const confirmNavigation = confirm("You have unsaved work. Are you sure you want to return to the home page and lose your progress?");
-        
-        if (confirmNavigation) {
-            window.location.href = 'index.html'; // Redirect to home if the user confirms
-        }
-    }
-    </script>
+    <footer class="mt-auto border-t border-slate-200 bg-white px-4 py-4 text-center">
+        <a href="https://NATCAPWG.CAP.GOV" class="text-sm font-semibold text-cap-blue hover:underline">
+            Arlington Composite Squadron
+        </a>
+        <p class="text-xs text-slate-400 mt-1">
+            Made by 2d Lt Carter Rainey &nbsp;·&nbsp;
+            <a href="https://github.com/sddavy/DrillTesting" class="text-xs text-slate-400">Forked from Samuel Davy's CAP Online Drill Testing.</a>
+            &nbsp;·&nbsp; © 2026 Civil Air Patrol, All Rights Reserved
+        </p>
+    </footer>
 </body>
 </html>
